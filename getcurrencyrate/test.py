@@ -1,11 +1,13 @@
 from models import CurrencyRate
 from dbsession import DBSession,Base
 from searcher.boc_searcher import BOCPriceSearcher
+from searcher.cmb_searcher import CMBPriceSearcher
+from searcher.travelex_searcher import TravelexPriceSearcher
 from datetime import datetime
 
 
 #boc get data
-bocSearch= BOCPriceSearcher()
+bocSearch= TravelexPriceSearcher()
 bocData=bocSearch.getAllHistoryData()
 
 session=DBSession.dbSession()

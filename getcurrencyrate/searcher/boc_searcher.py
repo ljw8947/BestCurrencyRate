@@ -44,7 +44,7 @@ class BOCPriceSearcher(base_searcher.BaseSearcher):
         def getHistoryData(self,currencyCode):
             historyUrl="http://srh.bankofchina.com/search/whpj/search.jsp"
             data_list=[]
-            date=datetime(2018,8,1).date()
+            date=datetime(2016,8,1).date()
             while date<datetime.today().date():
                 r=requests.post(historyUrl,data={"erectDate":str(date),
                     "nothing":str(date),

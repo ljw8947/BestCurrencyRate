@@ -1,7 +1,7 @@
 create table if not exists CurrencyRate(
 rateID INTEGER PRIMARY KEY,
 sourceCode varchar(20) default '',
-currencyRate varchar(3) default '',
+currencyCode varchar(3) default '',
 sellPrice FLOAT default 0,
 buyPrice FLOAT default 0,
 date DATETIME default CURRENT_TIMESTAMP,

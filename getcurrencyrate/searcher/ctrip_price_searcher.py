@@ -1,7 +1,7 @@
 """
 get ctrip currency rate
 """
-from ..models import CurrencyRate
+from models import CurrencyRate
 from . import base_searcher
 import json
 import http.client

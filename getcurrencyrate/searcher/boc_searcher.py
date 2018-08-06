@@ -9,6 +9,7 @@ from datetime import datetime
 from datetime import timedelta
 from bs4 import BeautifulSoup
 import time
+import sys
 
 class BOCPriceSearcher(base_searcher.BaseSearcher):
         curencyDic={
@@ -40,15 +41,26 @@ class BOCPriceSearcher(base_searcher.BaseSearcher):
                     "TRY":{"num":"4560","name":"土耳其里拉"}
                 }
 
+        def getResponse(self,url,postData):
+            try:
+                return requests.post(url,data=postData)
+            except Exception as e:
+                print(e)
+            return None
         
         def getHistoryData(self,currencyCode):
             historyUrl="http://srh.bankofchina.com/search/whpj/search.jsp"
             data_list=[]
-            date=datetime(2016,8,1).date()
+            date=datetime(2017,8,1).date()
             while date<datetime.today().date():
-                r=requests.post(historyUrl,data={"erectDate":str(date),
-                    "nothing":str(date),
-                    "pjname":BOCPriceSearcher.curencyDic[currencyCode]["num"]})
+                count=0
+                while count<3:
+                    r=self.getResponse(historyUrl,{"erectDate":str(date),
+                        "nothing":str(date),
+                        "pjname":BOCPriceSearcher.curencyDic[currencyCode]["num"]})
+                    if r!=None:
+                        break
+                    time.sleep(5)                
                 soup=BeautifulSoup(r.text,'html5lib')
                 soup=soup.find_all("table")[1]
                 tds=soup.find_all("tr")[1].find_all("td")
@@ -60,6 +72,7 @@ class BOCPriceSearcher(base_searcher.BaseSearcher):
                     datetime.strptime(tds[7].contents[0],"%Y.%m.%d %H:%M:%S").date()
                 )
                 print(str(data))
+                time.sleep(0.5)
                 data_list.append(data)
                 date=date+timedelta(days=1)
             return data_list
@@ -68,6 +81,7 @@ class BOCPriceSearcher(base_searcher.BaseSearcher):
             data_list=[]
             for key in BOCPriceSearcher.curencyDic.keys():
                 data_list.extend(self.getHistoryData(key))
+                time.sleep(2)
             return data_list
             
 

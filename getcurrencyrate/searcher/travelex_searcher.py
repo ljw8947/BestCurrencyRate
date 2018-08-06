@@ -56,7 +56,8 @@ class TravelexPriceSearcher(base_searcher.BaseSearcher):
                     float(item[1])*(100/TravelexPriceSearcher.curencyDic[currencyCode]),
                     0,
                     datetime.fromtimestamp(int(item[0].replace("00000","00"))))
-                data_list.append(c)                   
+                print(str(c))
+                data_list.append(c)                 
             return data_list
 
         def getAllHistoryData(self):

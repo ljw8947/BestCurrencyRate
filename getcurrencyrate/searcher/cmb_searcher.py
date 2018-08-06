@@ -55,14 +55,14 @@ class CMBPriceSearcher(base_searcher.BaseSearcher):
                 
                 for tr in soup.find_all("tr"):
                     tds=tr.find_all("td")
-                    data_list.append(CurrencyRate(
+                    data=CurrencyRate(
                         "CMB",
                         CMBPriceSearcher.curencyDic[currencyCHNName],
                         getCleanStr(tds[4].contents[0]),
                         getCleanStr(tds[2].contents[0]),
-                        getDateTime(getCleanStr(tds[0].contents[0]))))
-                    
-                time.sleep(1)
+                        getDateTime(getCleanStr(tds[0].contents[0])))
+                    print(str(data))
+                    data_list.append(data)   
             return data_list
 
         def getAllHistoryData(self):

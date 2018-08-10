@@ -1,0 +1,30 @@
+
+
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}GetRate{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <div>
+        <table>
+            <tr>
+                <th>SourceCode</th>
+                <th>CurrencyCode</th>
+                <th>SellPrice</th>
+                <th>BuyPrice</th>
+                <th>EffectDate</th>
+            </tr>
+            {% for rate in rateList %}
+                <tr>
+                    <td>{{rate['sourceCode']}}</td>
+                    <td>{{rate['currencyCode']}}</td>
+                    <td>{{rate['sellPrice']}}</td>
+                    <td>{{rate['buyPrice']}}</td>
+                    <td>{{rate['date']}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

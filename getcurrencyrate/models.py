@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, create_engine,FLOAT,VARCHAR,DATETIME,INTEGER
 from sqlalchemy.ext.declarative import declarative_base
-from dbsession import Base
+from .dbsession import Base
 from datetime import datetime
 
 class CurrencyRate(Base):

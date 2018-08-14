@@ -26,3 +26,15 @@ class CurrencyRate(Base):
         return "rateID:%s souceCode:%s currencyCode:%s sellPrice:%s buyPrice:%s date:%s createTime:%s" % \
             (self.rateID,self.sourceCode,self.currencyCode,\
                 self.sellPrice,self.buyPrice,self.date,self.createTime)
+    
+    @property
+    def serialize(self):
+       """Return object data in easily serializeable format"""
+       return {
+           'rateID': self.rateID,
+           'souceCode': self.sourceCode,
+           'currencyCode':self.currencyCode,
+           'sellPrice':self.sellPrice,
+           'buyPrice':self.buyPrice,
+           'date':'{}-{}-{}'.format(self.date.year, self.date.month, self.date.day)
+       }

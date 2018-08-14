@@ -13,121 +13,124 @@
 <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
 
 <body>
-  <form method="post">
-    <select id="currencyCode">
-      <option>USD</option>>
-      <option>AUD</option>>
-      <option>MOP</option>>
-      <option>BRL</option>>
-      <option>DKK</option>>
-      <option>RUB</option>>
-      <option>PHP</option>>
-      <option>HKD</option>>
-      <option>KRW</option>>
-      <option>CAD</option>>
-      <option>NOK</option>>
-      <option>EUR</option>>
-      <option>CNY</option>>
-      <option>JPY</option>>
-      <option>SEK</option>>
-      <option>CHF</option>>
-      <option>TWD</option>>
-      <option>THB</option>>
-      <option>SGD</option>>
-      <option>NZD</option>>
-      <option>IDR</option>>
-      <option>GBP</option>>
-    </select>
-    <label>StartDate</label>
-    <input id="startDate" value="2018-01-01" />
-    <label>EndDate</label>
-    <input id="endDate" value="2018-08-07" />
-    <br/>
-    <br/>
-    <input type="submit" value="Search" onclick="loadRate()">
-  </form>
-
+  <select id="currencyCode">
+    <option>USD</option>>
+    <option>AUD</option>>
+    <option>MOP</option>>
+    <option>BRL</option>>
+    <option>DKK</option>>
+    <option>RUB</option>>
+    <option>PHP</option>>
+    <option>HKD</option>>
+    <option>KRW</option>>
+    <option>CAD</option>>
+    <option>NOK</option>>
+    <option>EUR</option>>
+    <option>CNY</option>>
+    <option>JPY</option>>
+    <option>SEK</option>>
+    <option>CHF</option>>
+    <option>TWD</option>>
+    <option>THB</option>>
+    <option>SGD</option>>
+    <option>NZD</option>>
+    <option>IDR</option>>
+    <option>GBP</option>>
+  </select>
+  <label>StartDate</label>
+  <input id="startDate" value="2018-07-01" />
+  <label>EndDate</label>
+  <input id="endDate" value="2018-08-01" />
+  <br/>
+  <br/>
+  <button id="submit" onclick="getRate()">submit</button>
   <div id="container" style="height:700px"></div>
 
 </body>
 <script type="text/javascript">
-  function loadRate() {
-    var xhttp = new XMLHttpRequest();    
-    xhttp.open("POST", "./getLineStack", true);
-    currencyCode=document.getElementById("currencyCode").text;
-    startDate=document.getElementById("startDate").text;
-    endDate=document.getElementById("endDate").text
-    xhttp.send("currencyCode="+currencyCode+"&startDate="+startDate+"&endDate"+endDate);
+  function getRate() {
+    $.post("getLineStack",
+      {
+        currencyCode: $("#currencyCode").val(),
+        startDate: $("#startDate").val(),
+        endDate: $("#endDate").val()
+      },
+      function (data) {
+        loadRate(data);
+      },
+    );
+  }
 
+  function loadRate(data) {
+    startDate = new Date($("#startDate").val());
+    endDate = new Date($("#endDate").val());
+    days = (endDate.getTime() - startDate.getTime()) / 86400000;
+    dateList = [];
+    currentDate =new Date(startDate);
+    for (var i = 0; i < days; i++) {
+      dateList[i] = new Date(currentDate);
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    travelex = {
+      name: 'Travelex',
+      type: 'line',
+      //stack: '总量',
+      data: []
+    }
+    data.data.travelex.forEach((item, index) => {
+      travelex.data.push(item.sellPrice)
+    });
+    cmb = {
+      name: 'CMB',
+      type: 'line',
+      //stack: '总量',
+      data: []
+    }
+    data.data.cmb.forEach((item, index) => {
+      cmb.data.push(item.sellPrice)
+    });
+
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    var app = {};
+    option = null;
+    option = {
+      title: {
+        text: '售汇价格波动表'
+      },
+      tooltip: {
+        trigger: 'axis'
+      },
+      legend: {
+        data: ['Travelex', 'CMB']
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      toolbox: {
+        feature: {
+          saveAsImage: {}
+        }
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: dateList
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
+      travelex, cmb
+      ]
+    };
+
+    if (option && typeof option === "object") {
+      myChart.setOption(option, true);
+    }
   }
-  var dom = document.getElementById("container");
-  var myChart = echarts.init(dom);
-  var app = {};
-  option = null;
-  option = {
-    title: {
-      text: '售汇价格波动表'
-    },
-    tooltip: {
-      trigger: 'axis'
-    },
-    legend: {
-      data: ['Travelex','CMB']
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    toolbox: {
-      feature: {
-        saveAsImage: {}
-      }
-    },
-    xAxis: {
-      type: 'category',
-      boundaryGap: false,
-      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [
-      {
-        name: '邮件营销',
-        type: 'line',
-        stack: '总量',
-        data: [120, 132, 101, 134, 90, 230, 210]
-      },
-      {
-        name: '联盟广告',
-        type: 'line',
-        stack: '总量',
-        data: [220, 182, 191, 234, 290, 330, 310]
-      },
-      {
-        name: '视频广告',
-        type: 'line',
-        stack: '总量',
-        data: [150, 232, 201, 154, 190, 330, 410]
-      },
-      {
-        name: '直接访问',
-        type: 'line',
-        stack: '总量',
-        data: [320, 332, 301, 334, 390, 330, 320]
-      },
-      {
-        name: '搜索引擎',
-        type: 'line',
-        stack: '总量',
-        data: [820, 932, 901, 934, 1290, 1330, 1320]
-      }
-    ]
-  };
-  ;
-  if (option && typeof option === "object") {
-    myChart.setOption(option, true);
-  }
+
 </script> {% endblock %}
